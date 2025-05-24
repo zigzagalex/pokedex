@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -10,21 +12,38 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(conf *config) error
 }
 
-func commandExit() error {
+type config struct {
+	Prev string
+	Next string
+}
+
+type pokeAPIResult struct {
+	Count    int
+	Next     string
+	Previous string
+	Results  []locationArea
+}
+
+type locationArea struct {
+	Name string
+	URL  string
+}
+
+func commandExit(conf *config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandEasteregg() error {
+func commandEasteregg(conf *config) error {
 	fmt.Println("🙉")
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(conf *config) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println("")
@@ -34,7 +53,34 @@ func commandHelp() error {
 	return nil
 }
 
+func commandMap(conf *config) error {
+	var lookupURL string
+	if conf.Next == "" {
+		lookupURL = "https://pokeapi.co/api/v2/location-area/"
+	} else {
+		lookupURL = conf.Next
+	}
+	res, err0 := http.Get(lookupURL)
+	if err0 != nil {
+		fmt.Println(err0)
+	}
+	defer res.Body.Close()
+
+	var data pokeAPIResult
+	err1 := json.NewDecoder(res.Body).Decode(&data)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	conf.Prev = data.Previous
+	conf.Next = data.Next
+	for _, loc := range data.Results {
+		fmt.Println(loc.Name)
+	}
+	return nil
+}
+
 var commands map[string]cliCommand
+var conf config
 
 func init() {
 	commands = map[string]cliCommand{
@@ -53,6 +99,11 @@ func init() {
 			description: "Surprise easter-egg",
 			callback:    commandEasteregg,
 		},
+		"map": {
+			name:        "map",
+			description: "Shows 20 map areas in the Pokemon world",
+			callback:    commandMap,
+		},
 	}
 }
 
@@ -66,7 +117,7 @@ func main() {
 		}
 		command, ok := commands[text[0]]
 		if ok {
-			err := command.callback()
+			err := command.callback(&conf)
 			if err != nil {
 				fmt.Println("Error:", err)
 			}
