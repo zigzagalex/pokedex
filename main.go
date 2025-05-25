@@ -3,15 +3,24 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/zigzagalex/pokedex/internal/commands"
+	"github.com/zigzagalex/pokedex/internal/pokecache"
 )
 
 func main() {
-	conf := commands.Config{}
 	cmds := commands.AvailableCommands()
+	cache, err := pokecache.NewCache(5 * time.Second)
+	if err != nil {
+		log.Fatal(err)
+	}
+	conf := commands.Config{
+		Cache: &cache,
+	}
 
 	reader := bufio.NewScanner(os.Stdin)
 	fmt.Print("Pokedex > ")

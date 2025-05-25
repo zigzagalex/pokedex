@@ -2,7 +2,7 @@
 package pokeapi
 
 import (
-	"encoding/json"
+	"io"
 	"net/http"
 )
 
@@ -18,17 +18,12 @@ type PokeAPIResult struct {
 	Results  []LocationArea
 }
 
-func GetLocationAreas(url string) (*PokeAPIResult, error) {
+func GetResult(url string) ([]byte, error) {
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
 	defer res.Body.Close()
 
-	var data PokeAPIResult
-	err = json.NewDecoder(res.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return io.ReadAll(res.Body)
 }

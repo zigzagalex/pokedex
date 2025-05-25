@@ -1,11 +1,11 @@
 package main
 
-import "testing"
-
-
+import (
+	"testing"
+)
 
 func TestCleanInput(t *testing.T) {
-    cases := []struct {
+	cases := []struct {
 		input    string
 		expected []string
 	}{
@@ -14,7 +14,7 @@ func TestCleanInput(t *testing.T) {
 			expected: []string{"hello", "world"},
 		},
 		{
-			input: "Charmander Bulbasaur PIKACHU",
+			input:    "Charmander Bulbasaur PIKACHU",
 			expected: []string{"charmander", "bulbasaur", "pikachu"},
 		},
 	}
@@ -22,10 +22,10 @@ func TestCleanInput(t *testing.T) {
 	for _, c := range cases {
 		actual := cleanInput(c.input)
 		if len(actual) != len(c.expected) {
-			t.Errorf("Length of actual doesn't match expected: len actual %v, len expected %v",len(actual), len(c.expected))
+			t.Errorf("Length of actual doesn't match expected: len actual %v, len expected %v", len(actual), len(c.expected))
 			t.Fail()
 		}
-		
+
 		for i := range actual {
 			word := actual[i]
 			expectedWord := c.expected[i]
@@ -36,4 +36,3 @@ func TestCleanInput(t *testing.T) {
 		}
 	}
 }
-

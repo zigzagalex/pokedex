@@ -1,8 +1,12 @@
 package commands
 
+import "github.com/zigzagalex/pokedex/internal/pokecache"
+
+
 type Config struct {
 	Prev string
 	Next string
+	Cache *pokecache.Cache
 }
 
 type CLICommand struct {
