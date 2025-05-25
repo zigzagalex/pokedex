@@ -38,9 +38,14 @@ func AvailableCommands() map[string]CLICommand {
 			Callback:    CommandCatch,
 		},
 		"pokedex": {
-			Name: "pokedex",
+			Name:        "pokedex",
 			Description: "Shows the caught pokemon",
-			Callback: CommandPokedex,
+			Callback:    CommandPokedex,
+		},
+		"inspect": {
+			Name:        "inspect",
+			Description: "Get info of caught pokemon",
+			Callback:    CommandInspect,
 		},
 	}
 }
