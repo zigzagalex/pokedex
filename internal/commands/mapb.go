@@ -7,7 +7,7 @@ import (
 	"github.com/zigzagalex/pokedex/internal/pokeapi"
 )
 
-func commandMapBack(conf *Config) error {
+func CommandMapBack(conf *Config, args ...string) error {
 	url := conf.Prev
 	if url == "" {
 		fmt.Println("You're on the first page.")

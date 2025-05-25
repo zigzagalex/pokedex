@@ -12,5 +12,5 @@ type Config struct {
 type CLICommand struct {
 	Name        string
 	Description string
-	Callback    func(conf *Config) error
+	Callback    func(conf *Config, args ...string) error
 }

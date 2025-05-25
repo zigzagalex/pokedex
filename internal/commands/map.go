@@ -7,7 +7,7 @@ import (
 	"github.com/zigzagalex/pokedex/internal/pokeapi"
 )
 
-func CommandMap(conf *Config) error {
+func CommandMap(conf *Config, args ...string) error {
 	url := conf.Next
 	if url == "" {
 		url = "https://pokeapi.co/api/v2/location-area/"

@@ -30,9 +30,12 @@ func main() {
 			fmt.Print("Pokedex > ")
 			continue
 		}
-		command, ok := cmds[text[0]]
+		cmdName := text[0]
+		var args string
+		if len(text) > 1 {args = text[1]}
+		command, ok := cmds[cmdName]
 		if ok {
-			err := command.Callback(&conf)
+			err := command.Callback(&conf, args)
 			if err != nil {
 				fmt.Println("Error:", err)
 			}

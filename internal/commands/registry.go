@@ -25,7 +25,12 @@ func AvailableCommands() map[string]CLICommand {
 		"mapb": {
 			Name:        "mapb",
 			Description: "Shows previous 20 map areas in the Pokemon world",
-			Callback:    commandMapBack,
+			Callback:    CommandMapBack,
+		},
+		"explore": {
+			Name:        "explore",
+			Description: "Lets you explore a location area with explore <location-area>",
+			Callback:    CommandExplore,
 		},
 	}
 }
