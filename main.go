@@ -19,7 +19,8 @@ func main() {
 		log.Fatal(err)
 	}
 	conf := commands.Config{
-		Cache: &cache,
+		Cache:   &cache,
+		Pokedex: make(map[string]commands.Pokemon),
 	}
 
 	reader := bufio.NewScanner(os.Stdin)
@@ -32,7 +33,9 @@ func main() {
 		}
 		cmdName := text[0]
 		var args string
-		if len(text) > 1 {args = text[1]}
+		if len(text) > 1 {
+			args = text[1]
+		}
 		command, ok := cmds[cmdName]
 		if ok {
 			err := command.Callback(&conf, args)

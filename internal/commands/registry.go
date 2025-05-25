@@ -32,5 +32,15 @@ func AvailableCommands() map[string]CLICommand {
 			Description: "Lets you explore a location area with explore <location-area>",
 			Callback:    CommandExplore,
 		},
+		"catch": {
+			Name:        "catch",
+			Description: "User can try and catch a Pokemon with catch <name>",
+			Callback:    CommandCatch,
+		},
+		"pokedex": {
+			Name: "pokedex",
+			Description: "Shows the caught pokemon",
+			Callback: CommandPokedex,
+		},
 	}
 }
