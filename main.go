@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/peterh/liner"
 	"github.com/zigzagalex/pokedex/internal/commands"
 	"github.com/zigzagalex/pokedex/internal/pokecache"
 )
@@ -23,19 +23,38 @@ func main() {
 		Pokedex: make(map[string]commands.Pokemon),
 	}
 
-	reader := bufio.NewScanner(os.Stdin)
-	fmt.Print("Pokedex > ")
-	for reader.Scan() {
-		text := cleanInput(reader.Text())
-		if len(text) == 0 {
-			fmt.Print("Pokedex > ")
+	// Start Liner
+	line := liner.NewLiner()
+	defer line.Close()
+
+	line.SetCtrlCAborts(true)
+
+	// Set cache file
+	historyFile := ".pokedex_history"
+	if f, err := os.Open(historyFile); err == nil {
+		defer f.Close()
+		line.ReadHistory(f)
+	}
+
+	for {
+		input_text, err := line.Prompt("Pokedex > ")
+		if err != nil {
+			break // handle ctrl+d or ctrl+c
+		}
+		if input_text == "" {
 			continue
 		}
-		cmdName := text[0]
+		input_text = strings.TrimSpace(input_text)
+		line.AppendHistory(input_text)
+
+		tokens := cleanInput(input_text)
+		cmdName := tokens[0]
+
 		var args string
-		if len(text) > 1 {
-			args = text[1]
+		if len(tokens) > 1 {
+			args = tokens[1]
 		}
+
 		command, ok := cmds[cmdName]
 		if ok {
 			err := command.Callback(&conf, args)
@@ -45,7 +64,12 @@ func main() {
 		} else {
 			fmt.Println("Command not found.")
 		}
-		fmt.Print("Pokedex > ")
+
+	}
+	f, err := os.Create(historyFile)
+	if err == nil {
+		defer f.Close()
+		line.WriteHistory(f)
 	}
 }
 
