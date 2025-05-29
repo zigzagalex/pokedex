@@ -4,12 +4,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/peterh/liner"
 	"github.com/zigzagalex/pokedex/internal/commands"
 	"github.com/zigzagalex/pokedex/internal/pokecache"
+)
+
+var (
+	pokedex_history = filepath.Join(os.TempDir(), ".pokedex_history")
+	names           = []string{"explore", "inspect", "pokedex"}
 )
 
 func main() {
@@ -28,6 +34,14 @@ func main() {
 	defer line.Close()
 
 	line.SetCtrlCAborts(true)
+	line.SetCompleter(func(line string) (c []string) {
+		for _, n := range names {
+			if strings.HasPrefix(n, strings.ToLower(line)) {
+				c = append(c, n)
+			}
+		}
+		return
+	})
 
 	// Set cache file
 	historyFile := ".pokedex_history"
@@ -39,7 +53,7 @@ func main() {
 	for {
 		input_text, err := line.Prompt("Pokedex > ")
 		if err != nil {
-			break // handle ctrl+d or ctrl+c
+			break
 		}
 		if input_text == "" {
 			continue
